@@ -60,11 +60,11 @@ def checkHost(ip):
 	try:
 		# Ping the target
 		ping = sr1(IP(dst = ip)/ICMP()) 
-		print "\n Target is Up. Beginning Scan..."
-	except Exception: 
+		print "\n[*] Target is Up, Beginning Scan..."
+	except Exception:
 		print "\n Couldn't Resolve Target. Exiting..."
 		sys.exit(1)
-		
+
 # Function to scan a given port on scapy
 def scanPort(port):
 	try:
@@ -91,7 +91,22 @@ def scanPort(port):
 		send(RSTpkt)
 		print "\n User requested shut down. Exiting..."
 		sys.exit(1)
-
+		
+# Function for multiple hosts
+def checkMoreHost(ip):
+	conf.verb = 0 
+	iptest = ip.size
+	# Ping the target
+	ping = sr1(IP(dst = ip)/ICMP()) 
+	if ping == True:
+		print str(ip)
+		# For loop to iterate through port range
+		for port in ports:
+			# Call scanPort function 
+			status = scanPort(port)
+			if status == True:
+				print "Port " + str(port) + ": Open"
+				
 # Function used to check if a subnet range is used
 def checkSubnet(ip):
 	conf.verb = 0 
@@ -107,17 +122,8 @@ def checkSubnet(ip):
 		
 		# Execute checkHost in For loop
 		for ipaddress in addresses:
-			stats = checkHost(ipaddress)
-			print str(ipaddress)
-			
-			# For loop to iterate through port range
-			for port in ports:
-		
-			# Call scanPort function 
-			status = scanPort(port)
-			if status == True:
-				print "Port " + str(port) + ": Open"
-	
+			checkMoreHost(ipaddress)
+						
 	else:
 		checkHost(ip)
 		print "\n Started scan at " + strftime("%H:%M:%S") + "...\n"
