@@ -64,23 +64,6 @@ def checkHost(ip):
 		print "\n Couldn't Resolve Target. Exiting..."
 		sys.exit(1)
 		
-# Function used to check if a subnet range is used
-def checkSubnet(ip):
-	conf.verb = 0 
-	subnet = IPNetwork(ip)
-	
-	# This is only going to test for /24 subnet for now at least
-	if subnet.size == 256:
-		minIP = subnet.network
-		maxIP = subnet.broadcast
-		
-		addresses = range(str(minIP), str(maxIP))
-		print "\n Started scan at " + strftime("%H:%M:%S") + "...\n"
-		
-		# Execute checkHost in For loop
-		for ipaddress in addresses:
-			stats = checkHost(ipaddress)
-
 # Function to scan a given port on scapy
 def scanPort(port):
 	try:
@@ -108,15 +91,46 @@ def scanPort(port):
 		print "\n User requested shut down. Exiting..."
 		sys.exit(1)
 
+# Function used to check if a subnet range is used
+def checkSubnet(ip):
+	conf.verb = 0 
+	subnet = IPNetwork(ip)
+	
+	# This is only going to test for /24 subnet for now at least
+	if subnet.size == 256:
+		minIP = subnet.network
+		maxIP = subnet.broadcast
+		
+		addresses = range(str(minIP), str(maxIP))
+		print "\n Started scan at " + strftime("%H:%M:%S") + "...\n"
+		
+		# Execute checkHost in For loop
+		for ipaddress in addresses:
+			stats = checkHost(ipaddress)
+			print str(ipaddress)
+			
+			# For loop to iterate through port range
+			for port in ports:
+		
+			# Call scanPort function 
+			status = scanPort(port)
+			if status == True:
+				print "Port " + str(port) + ": Open"
+	
+	else:
+		checkHost(ip)
+		print "\n Started scan at " + strftime("%H:%M:%S") + "...\n"
+		
+		# For loop to iterate through port range
+		for port in ports:
+		
+		# Call scanPort function 
+		status = scanPort(port)
+		if status == True:
+			print "Port " + str(port) + ": Open"
+
 # Execute checkSubnet function
 checkSubnet(remoteServerIP)		
-
-# For loop to iterate through port range
-for port in ports:
-	# Call scanPort function 
-	status = scanPort(port)
-	if status == True:
-		print "Port " + str(port) + ": Open"
 
 # Check the time again
 t2 = datetime.now()
