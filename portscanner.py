@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Original source code framework from http://www.pythonforbeginners.com/code-snippets-source-code/port-scanner-in-python
 # Additional source: http://null-byte.wonderhowto.com/how-to/build-stealth-port-scanner-with-scapy-and-python-0164779/
+# Github page: https://github.com/fridrichperez/it567/blob/master/portscanner.py
 import socket
 import subprocess
 import sys 
